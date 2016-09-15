@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>Card Game</title>
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="playingCardGame.js"></script>
+	<script type="text/javascript" src="playingCardGame.ui.js"></script>
+	<script type="text/javascript">
+			
+		$(document).ready(function(){
+			var cardDeck = $("#cardDeck").playingCards(); //To generate the deck of cards
+			
+			/*
+			 * displaying cards on the table
+			 */
+			var showCards = function(){ 
+				cardDeck.spread(); 
+			}
+
+			var hand = [];
+			var showError = function(msg){
+				$('#error').html(msg).show();
+				setTimeout(function(){
+					$('#error').fadeOut('slow');
+				},3000);
+			}
+			
+			/*
+			 * displaying withdrawn cards on the table
+			 */
+			var showHand = function(){
+				var el = $('#yourHand')
+				el.html('');
+				for(var i=0;i<hand.length;i++){
+					el.append(hand[i].getHTML());
+				}
+			}
+			
+			/*
+			 * To shuffle the deck of cards
+			 */
+			var doShuffle = function(){debugger
+				cardDeck.shuffle();
+				cardDeck.spread(); // update card table
+			}
+			
+			/*
+			 * to draw a card from the deck
+			 */
+			var doDrawCard = function(){
+				var c = cardDeck.draw();
+				if(!c){
+					showError('no more cards');
+					return;
+				}
+				hand[hand.length] = c;
+				
+				showHand();
+			}
+			
+			/*
+			 * To order the deck of cards by rank
+			 */
+			var doOrderByRank = function(){
+				cardDeck.orderByRank();
+				cardDeck.spread(); // update card table
+			}
+			
+			/*
+			 * To order the withdrawn deck of cards by rank
+			 */
+			var doOrderHandByRank = function(){
+				var handDeck = $("#yourHand").playingCards();
+				handDeck.cards = hand;
+				handDeck.orderByRank();
+				handDeck.spread();
+				delete handDeck;
+			}
+			
+			/*
+			 * To order the deck of cards by suit
+			 */
+			var doOrderBySuit = function(){debugger
+				cardDeck.orderBySuit();
+				cardDeck.spread(); // update card table
+			}
+			
+			$('#generate').click(showCards);
+			$('#shuffler').click(doShuffle);
+			$('#draw').click(doDrawCard);
+			$('#shuffleDraw').click(function(){
+				doShuffle();
+				doDrawCard();
+			});
+			$('#addCard').click(function(){
+				if(!hand.length){
+					showError('your hand is empty');
+					return;
+				}
+				var c = hand.pop();
+				showHand();
+				cardDeck.addCard(c);
+				cardDeck.spread();
+			});
+			$('#orderByRank').click(doOrderByRank);
+			$('#orderBySuit').click(doOrderBySuit);
+			$('#orderHandByRank').click(doOrderHandByRank);
+
+			});
+		</script>
+    <link rel="stylesheet" type="text/css" media="all" href="playingCardGame.ui.css"/>
+	
+    <style type="text/css">
+        html, body {
+			height:100%; 
+			margin:0; 
+			overflow:hidden;
+		}
+		header, footer {
+			display:block; 
+			background-color:green; 
+			height:8%;
+			color:#fff;
+			text-align:center;
+		}
+		header {
+			font-size: 30px;
+			padding-top: 10px;
+		}
+		footer {
+			font-size: 15px;
+			padding-top: 10px;
+		}
+		.button {
+			margin-top:5px;
+			margin-bottom: 5px;
+			height : 50px;
+			width: 150px;
+			background-color : black;
+			color : white;
+		}
+		section {
+			height:80%; 
+			background-color:white;
+			display:block; 
+			overflow:auto;
+		}
+				 
+        h2 {
+			font-size: 1.5em; 
+			color: #64052a;
+		}
+		#error {
+			display:none;
+			color:#f00;
+			border:1px solid #f60;
+			padding:5px;
+			margin:5px;
+		}
+    </style>
+
+</head>
+
+<body>
+
+<header>House Of Cards</header>
+<section>
+    <div class="mainContainer">
+	
+		<div style="width: 15%; float:left">
+		<h2>What do you <br/>want to do???</h2>
+			<div id="error"></div>
+			
+			<input type="button" class ="button" id="generate" value="Generate" /> <br/> 
+			<input type="button" class ="button" id="shuffler" value="Shuffle" /> <br/>
+			<input type="button" class ="button" id="draw" value="Draw a card" /> <br/>
+			<input type="button" class ="button" id="addCard" value="Add drawn card back" /><br/>
+			<input type="button" class ="button" id="orderByRank" value="Order by Rank" /> <br/>
+			<input type="button" class ="button" id="orderBySuit" value="Order by Suit" /> </div> 
+	
+	
+		<div id="container" style="width: 75%; float:left">
+
+			<h2>Your Deck</h2>
+			<div id="cardDeck"></div>    <br />
+	    
+		
+	</div>
+	
+	<div style="width: 10%; float:left">
+		<h2>Withdrawn</h2>
+		<input type="button" id="orderHandByRank" value="Order by Rank" /> <br/>
+		<div id="yourHand"></div>
+	</div>
+	
+	</div>
+</section>
+<footer><p>Copyright @NBS, Developed by AK :)</p></footer>
+
+
+
+
+</body>
+</html>
+˝
